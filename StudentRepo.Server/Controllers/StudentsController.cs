@@ -23,10 +23,54 @@ namespace StudentRepo.Server.Controllers
 
         // GET: api/Students
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Student>>> GetStudents()
+        public async Task<ActionResult<IEnumerable<StudentSummaryDTO>>> GetStudents(
+                [FromQuery] string? searchQuery = null,
+                [FromQuery] string? sortBy = "FirstName",
+                [FromQuery] string? sortDirection = "asc"
+            )
         {
-            //return await _context.Students.ToListAsync();
-            return await _context.Students.ToListAsync();
+            var query = _context.Students.AsQueryable();
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                query = query.Where(s => s.FirstName.Contains(searchQuery) ||
+                                         s.LastName.Contains(searchQuery) ||
+                                         s.Mobile.Contains(searchQuery) ||
+                                         s.Email.Contains(searchQuery) ||
+                                         s.NIC.Contains(searchQuery));
+            }
+            query = sortDirection.ToLower() switch
+            {
+                "desc" => sortBy.ToLower() switch
+                {
+                    "lastname" => query.OrderByDescending(s => s.LastName),
+                    "mobile" => query.OrderByDescending(s => s.Mobile),
+                    "email" => query.OrderByDescending(s => s.Email),
+                    "nic" => query.OrderByDescending(s => s.NIC),
+                    _ => query.OrderByDescending(s => s.FirstName)
+                },
+                _ => sortBy.ToLower() switch
+                {
+                    "lastname" => query.OrderBy(s => s.LastName),
+                    "mobile" => query.OrderBy(s => s.Mobile),
+                    "email" => query.OrderBy(s => s.Email),
+                    "nic" => query.OrderBy(s => s.NIC),
+                    _ => query.OrderBy(s => s.FirstName)
+                },
+            };
+
+            var studentSummaries = await query
+                .Select(s => new StudentSummaryDTO
+                {
+                    Id = s.Id,
+                    FirstName = s.FirstName,
+                    LastName = s.LastName,
+                    Mobile = s.Mobile,
+                    Email = s.Email,
+                    NIC = s.NIC
+                })
+                .ToListAsync();
+
+            return Ok(studentSummaries);
 
         }
 
