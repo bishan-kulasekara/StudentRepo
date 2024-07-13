@@ -13,6 +13,17 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<StudentContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigins",
+    builder =>
+    {
+        builder.WithOrigins("https://localhost:4200")
+               .AllowAnyHeader()
+               .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 app.UseDefaultFiles();
@@ -27,7 +38,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseCors("AllowSpecificOrigins");
+
 app.UseAuthorization();
+
 
 app.MapControllers();
 

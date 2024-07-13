@@ -1,24 +1,37 @@
-﻿<h1 id="tableLabel">Weather forecast</h1>
+<h1 id="tableLabel">Student List</h1>
 
 <p>This component demonstrates fetching data from the server.</p>
+<div>
+   <!--<input type="text" [(ngModel)]="searchQuery" placeholder="Search students..." (input)="getStudents()" /> {% endcomment %}-->
+   <input type="text" [(ngModel)]="searchQuery" placeholder="Search students..." />
+   <button (click)="getStudents()">Search</button>
+</div>
 
-<p *ngIf="!forecasts"><em>Loading... Please refresh once the ASP.NET backend has started. See <a href="https://aka.ms/jspsintegrationangular">https://aka.ms/jspsintegrationangular</a> for more details.</em></p>
 
-<table *ngIf="forecasts">
-    <thead>
+
+<div class="container">
+  <div class="table-container">
+    <table>
+      <thead>
         <tr>
-            <th>Date</th>
-            <th>Temp. (C)</th>
-            <th>Temp. (F)</th>
-            <th>Summary</th>
+          <th (click)="sort('FirstName')">First Name</th>
+          <th (click)="sort('LastName')">Last Name</th>
+          <th (click)="sort('Mobile')">Mobile</th>
+          <th (click)="sort('Email')">Email</th>
+          <th (click)="sort('NIC')">NIC</th>
         </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let forecast of forecasts">
-            <td>{{ forecast.date }}</td>
-            <td>{{ forecast.temperatureC }}</td>
-            <td>{{ forecast.temperatureF }}</td>
-            <td>{{ forecast.summary }}</td>
+      </thead>
+      <tbody>
+        <tr *ngFor="let student of students" (click)="getStudentDetails(student.id)" [class.selected]="selectedStudent?.id === student.id">
+          <td>{{ student.firstName }}</td>
+          <td>{{ student.lastName }}</td>
+          <td>{{ student.mobile }}</td>
+          <td>{{ student.email }}</td>
+          <td>{{ student.nic }}</td>
         </tr>
-    </tbody>
-</table>
+      </tbody>
+    </table>
+  </div>
+  <app-detailed [selectedStudent]="selectedStudent"></app-detailed>
+  
+</div>
