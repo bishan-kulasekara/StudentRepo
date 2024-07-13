@@ -1,28 +1,16 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Student } from '../Models/Student';
 
 @Component({
   selector: 'app-detailed',
   templateUrl: './detailed.component.html',
-  styleUrls: ['./detailed.component.css']
+  styleUrl: './detailed.component.css'
 })
-export class DetailedComponent implements OnChanges {
-  @Input() selectedStudent: Student = Student.getInstance();
-  editMode: boolean = false;
+export class DetailedComponent {
+  @Input() selectedStudent: Student | null = null;
+  //editableStudent: Student = Student;
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['selectedStudent']) {
-      const currentValue = changes['selectedStudent'].currentValue;
-      const previousValue = changes['selectedStudent'].previousValue;
-      console.log('User changed from', previousValue, 'to', currentValue);
-    }
-    //if (changes.['selectedStudent'].) {
-      // Set edit mode based on whether the selected student is new or existing
-    //  this.editMode = this.selectedStudent.id === -1;
-    //}
-  }
-
-  getInitials(name: string): string {
+  getInitials(name: string) {
     return name.split(' ').map((n: string) => n[0]).join('');
   }
 }

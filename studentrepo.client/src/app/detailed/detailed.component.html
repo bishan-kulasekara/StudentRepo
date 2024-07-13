@@ -1,46 +1,49 @@
 <div class="details-container">
-  <h2 *ngIf="selectedStudent.id !== -1; else newStudentTitle">Details for {{ selectedStudent.firstName }} {{ selectedStudent.lastName }}</h2>
-
-  <ng-template #newStudentTitle>
-    <h2>New Student</h2>
-  </ng-template>
-
-  <div class="avatar" *ngIf="selectedStudent.id !== -1">
-    <img *ngIf="selectedStudent.profileImage" [src]="selectedStudent.profileImage" alt="Profile Image" class="rounded-image">
-    <div *ngIf="!selectedStudent.profileImage" class="initials">{{ getInitials(selectedStudent.firstName + ' ' + selectedStudent.lastName) }}</div>
-  </div>
-
-  <div *ngIf="!editMode">
-    <p>Mobile: {{ selectedStudent.mobile }}</p>
-    <p>Email: {{ selectedStudent.email }}</p>
-    <p>NIC: {{ selectedStudent.nic }}</p>
-    <p>Date of Birth: {{ selectedStudent.dateOfBirth }}</p>
-    <p>Address: {{ selectedStudent.address }}</p>
-  </div>
-
-  <ng-template [ngIf]="editMode">
-    <div>
-      <div>
-        <label>First Name: <input type="text" [(ngModel)]="selectedStudent.firstName" /></label>
-      </div>
-      <div>
-        <label>Last Name: <input type="text" [(ngModel)]="selectedStudent.lastName" /></label>
-      </div>
-      <div>
-        <label>Mobile: <input type="text" [(ngModel)]="selectedStudent.mobile" /></label>
-      </div>
-      <div>
-        <label>Email: <input type="text" [(ngModel)]="selectedStudent.email" /></label>
-      </div>
-      <div>
-        <label>NIC: <input type="text" [(ngModel)]="selectedStudent.nic" /></label>
-      </div>
-      <div>
-        <label>Date of Birth: <input type="date" [(ngModel)]="selectedStudent.dateOfBirth" /></label>
-      </div>
-      <div>
-        <label>Address: <input type="text" [(ngModel)]="selectedStudent.address" /></label>
-      </div>
+    <div *ngIf="selectedStudent">
+      <h2>Details for {{ selectedStudent.firstName }} {{ selectedStudent.lastName }}</h2>
     </div>
-  </ng-template>
-</div>
+    <ng-template #newStudentTitle>
+      <h2>New Student</h2>
+    </ng-template>
+
+    <div class="avatar" *ngIf="selectedStudent">
+      <img *ngIf="selectedStudent.profileImage" [src]="selectedStudent.profileImage" alt="Profile Image" class="rounded-image">
+      <div *ngIf="!selectedStudent.profileImage" class="initials">{{ getInitials(selectedStudent.firstName + ' ' + selectedStudent.lastName) }}</div>
+    </div>
+
+    <div *ngIf="selectedStudent">
+
+      <p>Mobile: {{ selectedStudent.mobile }}</p>
+      <p>Email: {{ selectedStudent.email }}</p>
+      <p>NIC: {{ selectedStudent.nic }}</p>
+      <p>Date of Birth: {{ selectedStudent.dateOfBirth }}</p>
+      <p>Address: {{ selectedStudent.address }}</p>
+    </div>
+
+    <!--<ng-template [ngIf]="editMode">
+        <div>
+          <div>
+            <label>First Name: <input type="text" [(ngModel)]="selectedStudent.firstName" /></label>
+          </div>
+          <div>
+            <label>Last Name: <input type="text" [(ngModel)]="selectedStudent.lastName" /></label>
+          </div>
+          <div>
+            <label>Mobile: <input type="text" [(ngModel)]="selectedStudent.mobile" /></label>
+          </div>
+          <div>
+            <label>Email: <input type="text" [(ngModel)]="selectedStudent.email" /></label>
+          </div>
+          <div>
+            <label>NIC: <input type="text" [(ngModel)]="selectedStudent.nic" /></label>
+          </div>
+          <div>
+            <label>Date of Birth: <input type="date" [(ngModel)]="selectedStudent.dateOfBirth" /></label>
+          </div>
+          <div>
+            <label>Address: <input type="text" [(ngModel)]="selectedStudent.address" /></label>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+        -->

@@ -11,7 +11,7 @@ import { StudentSummaryDTO } from './Models/StudenSummaryDTO';
 })
 export class AppComponent implements OnInit {
   public students: StudentSummaryDTO[] = [];
-  public selectedStudent: Student =  Student.getInstance();
+  public selectedStudent: Student|null =  null;
   searchQuery: string = '';
   sortColumn: string = 'FirstName';
   sortDirection: string = 'asc';
@@ -52,8 +52,8 @@ export class AppComponent implements OnInit {
   }
 
   getStudentDetails(id: number) {
-    if (this.selectedStudent.id === id) {
-      this.selectedStudent.init();
+    if (this.selectedStudent && this.selectedStudent.id === id) {
+      this.selectedStudent=null;
     } else {
       this.http.get<Student>(`https://localhost:7272/api/Students/${id}`).subscribe(
         (result) => {
@@ -66,5 +66,6 @@ export class AppComponent implements OnInit {
       );
     }
   }
+
   title = 'studentrepo.client';
 }

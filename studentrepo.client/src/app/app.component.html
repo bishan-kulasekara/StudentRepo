@@ -32,6 +32,7 @@
       </tbody>
     </table>
   </div>
-  <app-detailed [selectedStudent]="selectedStudent"></app-detailed>
-  
+  <app-detailed *ngIf="selectedStudent" [selectedStudent]="selectedStudent"></app-detailed>
+  <app-newstudent *ngIf="!selectedStudent"></app-newstudent>
+
 </div>
