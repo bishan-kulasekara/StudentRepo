@@ -7,7 +7,7 @@
     </ng-template>
 
     <div class="avatar" *ngIf="selectedStudent">
-      <img *ngIf="selectedStudent.profileImage" [src]="selectedStudent.profileImage" alt="Profile Image" class="rounded-image">
+      <img *ngIf="selectedStudent.profileImage" [src]="getImgUrl()" alt="Profile Image" class="rounded-image">
       <div *ngIf="!selectedStudent.profileImage" class="initials">{{ getInitials(selectedStudent.firstName + ' ' + selectedStudent.lastName) }}</div>
     </div>
 

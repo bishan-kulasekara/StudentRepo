@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace StudentRepo.Server.Models
 {
@@ -33,5 +34,7 @@ namespace StudentRepo.Server.Models
         public string Address { get; set; }
 
         public string ProfileImage { get; set; }
+
+
     }
 }

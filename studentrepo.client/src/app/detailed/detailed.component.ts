@@ -13,4 +13,7 @@ export class DetailedComponent {
   getInitials(name: string) {
     return name.split(' ').map((n: string) => n[0]).join('');
   }
+  getImgUrl() {
+    return "https://localhost:7272/"+this.selectedStudent?.profileImage
+  }
 }

@@ -4,9 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Hosting.Internal;
 using StudentRepo.Server.Data;
 using StudentRepo.Server.Models;
+using Microsoft.AspNetCore.Hosting;
 
 namespace StudentRepo.Server.Controllers
 {
@@ -15,10 +18,12 @@ namespace StudentRepo.Server.Controllers
     public class StudentsController : ControllerBase
     {
         private readonly StudentContext _context;
+        private readonly IWebHostEnvironment _hostingEnvironment;
 
-        public StudentsController(StudentContext context)
+        public StudentsController(StudentContext context, IWebHostEnvironment hostingEnvironment)
         {
             _context = context;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         // GET: api/Students
@@ -26,10 +31,15 @@ namespace StudentRepo.Server.Controllers
         public async Task<ActionResult<IEnumerable<StudentSummaryDTO>>> GetStudents(
                 [FromQuery] string? searchQuery = null,
                 [FromQuery] string? sortBy = "FirstName",
-                [FromQuery] string? sortDirection = "asc"
+                [FromQuery] string? sortDirection = "asc",
+                [FromQuery] int? pageNumber = 1,
+                [FromQuery] int? pageSize = 10
             )
         {
             var query = _context.Students.AsQueryable();
+            int currentPageNumber = pageNumber ?? 1;
+            int currentPageSize = pageSize ?? 10;
+
             if (!string.IsNullOrEmpty(searchQuery))
             {
                 query = query.Where(s => s.FirstName.Contains(searchQuery) ||
@@ -37,6 +47,7 @@ namespace StudentRepo.Server.Controllers
                                          s.Mobile.Contains(searchQuery) ||
                                          s.Email.Contains(searchQuery) ||
                                          s.NIC.Contains(searchQuery));
+
             }
             query = sortDirection.ToLower() switch
             {
@@ -57,8 +68,10 @@ namespace StudentRepo.Server.Controllers
                     _ => query.OrderBy(s => s.FirstName)
                 },
             };
-
+            var totalRecords = await query.CountAsync();
             var studentSummaries = await query
+                .Skip((currentPageNumber - 1) * currentPageSize)
+                .Take(currentPageSize)
                 .Select(s => new StudentSummaryDTO
                 {
                     Id = s.Id,
@@ -69,8 +82,23 @@ namespace StudentRepo.Server.Controllers
                     NIC = s.NIC
                 })
                 .ToListAsync();
+            var pagedResult = new PagedResult<StudentSummaryDTO>
+            {
+                Data = studentSummaries,
+                TotalRecords = totalRecords,
+                PageNumber = currentPageNumber,
+                PageSize = currentPageSize
+            };
 
-            return Ok(studentSummaries);
+            //return Ok(studentSummaries);
+            var totalPages = (int)Math.Ceiling(totalRecords / (double)currentPageSize);
+            if (currentPageNumber> totalPages)
+            {
+                return BadRequest(new { message="Invalid page number"});
+            }
+
+            return Ok(pagedResult);
+            
 
         }
 
@@ -91,7 +119,7 @@ namespace StudentRepo.Server.Controllers
         // PUT: api/Students/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutStudent(int id, Student student)
+        public async Task<IActionResult> PutStudent(int id, Student student, IFormFile? file)
         {
             if (id != student.Id)
             {
@@ -122,12 +150,66 @@ namespace StudentRepo.Server.Controllers
         // POST: api/Students
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Student>> PostStudent(Student student)
+        public async Task<ActionResult<Student>> PostStudent([FromForm] Student student, [FromForm] IFormFile? file)
         {
+            if (file != null && file.Length > 0)
+            {
+                if (string.IsNullOrEmpty(_hostingEnvironment.WebRootPath))
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, "Web root path is not configured.");
+                }
+
+                var uniqueFileName = $"{student.Id}_{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+                var filePath = Path.Combine(_hostingEnvironment.WebRootPath, "uploads", uniqueFileName);
+
+                Directory.CreateDirectory(Path.Combine(_hostingEnvironment.WebRootPath, "uploads")); // Ensure the directory exists
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                student.ProfileImage = $"/uploads/{uniqueFileName}";
+            }
+
             _context.Students.Add(student);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetStudent", new { id = student.Id }, student);
+        }
+
+
+        [HttpPost("{id}/upload")]
+        public async Task<IActionResult> UploadProfileImage(int id, IFormFile file)
+        {
+            var student = await _context.Students.FindAsync(id);
+            if (student == null)
+            {
+                return NotFound();
+            }
+
+            if (file.Length > 0)
+            {
+                if (string.IsNullOrEmpty(_hostingEnvironment.WebRootPath))
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, "Web root path is not configured.");
+                }
+
+                var uniqueFileName = $"{id}_{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+                var filePath = Path.Combine(_hostingEnvironment.WebRootPath, "uploads", uniqueFileName);
+
+                Directory.CreateDirectory(Path.Combine(_hostingEnvironment.WebRootPath, "uploads")); // Ensure the directory exists
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+
+                student.ProfileImage = $"/uploads/{uniqueFileName}";
+                await _context.SaveChangesAsync();
+            }
+
+            return Ok(student);
         }
 
         // DELETE: api/Students/5

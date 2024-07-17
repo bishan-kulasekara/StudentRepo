@@ -1,33 +1,49 @@
-
-<h2>New Student</h2>
-
-<!--<div class="avatar" *ngIf="selectedStudent.id !== -1">
-  <img *ngIf="selectedStudent.profileImage" [src]="selectedStudent.profileImage" alt="Profile Image" class="rounded-image">
-  <div *ngIf="!selectedStudent.profileImage" class="initials">{{ getInitials(selectedStudent.firstName + ' ' + selectedStudent.lastName) }}</div>
-</div>-->
 <div>
-
-
-
-  <div>
-    <label>First Name: <input type="text" [(ngModel)]="newStudent.firstName" /></label>
-  </div>
-  <div>
-    <label>Last Name: <input type="text" [(ngModel)]="newStudent.lastName" /></label>
-  </div>
-  <div>
-    <label>Mobile: <input type="text" [(ngModel)]="newStudent.mobile" /></label>
-  </div>
-  <div>
-    <label>Email: <input type="text" [(ngModel)]="newStudent.email" /></label>
-  </div>
-  <div>
-    <label>NIC: <input type="text" [(ngModel)]="newStudent.nic" /></label>
-  </div>
-  <div>
-    <label>Date of Birth: <input type="date" [(ngModel)]="newStudent.dateOfBirth" /></label>
-  </div>
-  <div>
-    <label>Address: <input type="text" [(ngModel)]="newStudent.address" /></label>
-  </div>
+  <form (ngSubmit)="onSubmit()">
+    <div>
+      <label for="firstName">First Name:</label>
+      <input type="text" id="firstName" [(ngModel)]="student.firstName" name="firstName" placeholder="First Name" required>
+    </div>
+    <div>
+      <label for="lastName">Last Name:</label>
+      <input type="text" id="lastName" [(ngModel)]="student.lastName" name="lastName" placeholder="Last Name" required>
+    </div>
+    <div>
+      <label for="mobile">Mobile:</label>
+      <input type="text" id="mobile" [(ngModel)]="student.mobile" name="mobile" placeholder="Mobile">
+    </div>
+    <div>
+      <label for="email">Email:</label>
+      <input type="email" id="email" [(ngModel)]="student.email" name="email" placeholder="Email" required>
+    </div>
+    <div>
+      <label for="nic">NIC:</label>
+      <input type="text" id="nic" [(ngModel)]="student.nic" name="nic" placeholder="NIC">
+    </div>
+    <div>
+      <label for="dateOfBirth">Date of Birth:</label>
+      <input type="date" id="dateOfBirth" [(ngModel)]="student.dateOfBirth" name="dateOfBirth" placeholder="Date of Birth">
+    </div>
+    <div>
+      <label for="address">Address:</label>
+      <input type="text" id="address" [(ngModel)]="student.address" name="address" placeholder="Address">
+    </div>
+    <div>
+      <label for="profileImage">Profile Image:</label>
+      <div class="image-upload-container" (click)="fileInput.click()">
+        <input type="file" id="profileImage" (change)="onFileSelected($event)" #fileInput style="display:none">
+        <div class="image-placeholder">
+          <img *ngIf="imageUrl" [src]="imageUrl" alt="Profile Image" class="profile-image">
+          <!--<svg *ngIf="!imageUrl" width="100" height="100" viewBox="0 0 100 100" class="profile-svg">
+            <circle cx="50" cy="50" r="45" stroke="black" stroke-width="3" fill="white" />
+          </svg>-->
+          <svg *ngIf="!imageUrl" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" class="profile-svg"><path fill="currentColor" d="M19 10a1 1 0 0 0-1 1v3.38l-1.48-1.48a2.79 2.79 0 0 0-3.93 0l-.7.71l-2.48-2.49a2.79 2.79 0 0 0-3.93 0L4 12.61V7a1 1 0 0 1 1-1h8a1 1 0 0 0 0-2H5a3 3 0 0 0-3 3v12.22A2.79 2.79 0 0 0 4.78 22h12.44a2.88 2.88 0 0 0 .8-.12a2.74 2.74 0 0 0 2-2.65V11A1 1 0 0 0 19 10M5 20a1 1 0 0 1-1-1v-3.57l2.89-2.89a.78.78 0 0 1 1.1 0L15.46 20Zm13-1a1 1 0 0 1-.18.54L13.3 15l.71-.7a.77.77 0 0 1 1.1 0L18 17.21Zm3-15h-1V3a1 1 0 0 0-2 0v1h-1a1 1 0 0 0 0 2h1v1a1 1 0 0 0 2 0V6h1a1 1 0 0 0 0-2" /></svg>
+          <span *ngIf="imageUrl" class="badge" (click)="clearImage($event)">&#10006;</span>
+        </div>
+      </div>
+    </div>
+    <div>
+      <button type="submit">Submit</button>
+    </div>
+  </form>
 </div>

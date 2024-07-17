@@ -29,9 +29,18 @@
           <td>{{ student.email }}</td>
           <td>{{ student.nic }}</td>
         </tr>
+        <tr><nav>
+  <div class="pagination-container">
+    <button [disabled]="pageNumber === 1" (click)="goToPage(pageNumber - 1)">Previous</button>
+    <span>Page {{ pageNumber }} of {{ pages }}</span>
+
+    <button [disabled]="pageNumber === pages" (click)="goToPage(pageNumber + 1)">Next</button>
+  </div>
+</nav></tr>
       </tbody>
     </table>
   </div>
+  
   <app-detailed *ngIf="selectedStudent" [selectedStudent]="selectedStudent"></app-detailed>
   <app-newstudent *ngIf="!selectedStudent"></app-newstudent>
 
