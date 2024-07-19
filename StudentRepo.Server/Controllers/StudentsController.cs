@@ -152,6 +152,8 @@ namespace StudentRepo.Server.Controllers
         [HttpPost]
         public async Task<ActionResult<Student>> PostStudent([FromForm] Student student, [FromForm] IFormFile? file)
         {
+            
+
             if (file != null && file.Length > 0)
             {
                 if (string.IsNullOrEmpty(_hostingEnvironment.WebRootPath))
@@ -159,7 +161,7 @@ namespace StudentRepo.Server.Controllers
                     return StatusCode(StatusCodes.Status500InternalServerError, "Web root path is not configured.");
                 }
 
-                var uniqueFileName = $"{student.Id}_{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+                var uniqueFileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
                 var filePath = Path.Combine(_hostingEnvironment.WebRootPath, "uploads", uniqueFileName);
 
                 Directory.CreateDirectory(Path.Combine(_hostingEnvironment.WebRootPath, "uploads")); // Ensure the directory exists
@@ -177,6 +179,8 @@ namespace StudentRepo.Server.Controllers
 
             return CreatedAtAction("GetStudent", new { id = student.Id }, student);
         }
+
+
 
 
         [HttpPost("{id}/upload")]

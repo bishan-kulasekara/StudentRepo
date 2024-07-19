@@ -33,7 +33,7 @@ namespace StudentRepo.Server.Models
         [StringLength(255)]
         public string Address { get; set; }
 
-        public string ProfileImage { get; set; }
+        public string? ProfileImage { get; set; }
 
 
     }

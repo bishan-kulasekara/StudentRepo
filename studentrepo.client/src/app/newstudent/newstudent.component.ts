@@ -14,10 +14,12 @@ export class NewstudentComponent {
     email: '',
     nic: '',
     dateOfBirth: '',
-    address: ''
+    address: '',
+    profileImage: ''
   };
   selectedFile: File | null = null;
   imageUrl: string | null = null;
+  errorMessage: string = '';
 
   constructor(private http: HttpClient) { }
 
@@ -36,6 +38,7 @@ export class NewstudentComponent {
       this.imageUrl = null;
     }
   }
+
   clearImage(event: any): void {
     event.stopPropagation();
     this.selectedFile = null;
@@ -51,13 +54,24 @@ export class NewstudentComponent {
     formData.append('nic', this.student.nic);
     formData.append('dateOfBirth', this.student.dateOfBirth);
     formData.append('address', this.student.address);
+    formData.append('profileImage', this.student.profileImage);
     if (this.selectedFile) {
       formData.append('file', this.selectedFile);
     }
 
-    // Replace 'your-api-url' with the actual API URL
-    this.http.post('your-api-url', formData).subscribe((response: any) => {
-      this.imageUrl = response.profileImage; // Update with the returned profile image URL
-    });
+    this.http.post('https://localhost:7272/api/Students', formData).subscribe(
+      (response: any) => {
+        this.imageUrl = response.profileImage; // Update with the returned profile image URL
+        this.errorMessage = ''; // Clear error message on success
+      },
+      (error: any) => {
+        if (error.status === 400 && error.error.errors) {
+          const validationErrors = error.error.errors;
+          this.errorMessage = 'Validation Errors:\n' + Object.keys(validationErrors).map(key => validationErrors[key].join('\n')).join('\n');
+        } else {
+          this.errorMessage = 'An unexpected error occurred.';
+        }
+      }
+    );
   }
 }
