@@ -10,6 +10,7 @@ using Microsoft.Extensions.Hosting.Internal;
 using StudentRepo.Server.Data;
 using StudentRepo.Server.Models;
 using Microsoft.AspNetCore.Hosting;
+using StudentRepo.Server.Helpers;
 
 namespace StudentRepo.Server.Controllers
 {
@@ -18,12 +19,12 @@ namespace StudentRepo.Server.Controllers
     public class StudentsController : ControllerBase
     {
         private readonly StudentContext _context;
-        private readonly IWebHostEnvironment _hostingEnvironment;
+        private readonly FileHelper _fileHelper;
 
         public StudentsController(StudentContext context, IWebHostEnvironment hostingEnvironment)
         {
             _context = context;
-            _hostingEnvironment = hostingEnvironment;
+            _fileHelper = new FileHelper(hostingEnvironment);
         }
 
         // GET: api/Students
@@ -164,9 +165,9 @@ namespace StudentRepo.Server.Controllers
             {
                 if (!string.IsNullOrEmpty(existingStudent.ProfileImage))
                 {
-                    DeleteFile(existingStudent);
+                    _fileHelper.DeleteFile(existingStudent);
                 }
-                existingStudent = SaveFile(existingStudent, file);
+                existingStudent = _fileHelper.SaveFile(existingStudent, file);
             }
 
             _context.Entry(existingStudent).State = EntityState.Modified;
@@ -201,7 +202,7 @@ namespace StudentRepo.Server.Controllers
 
             if (file != null && file.Length > 0)
             {
-                student=SaveFile(student, file);
+                student=_fileHelper.SaveFile(student, file);
             }
 
             _context.Students.Add(student);
@@ -213,7 +214,7 @@ namespace StudentRepo.Server.Controllers
 
 
 
-        [HttpPost("{id}/upload")]
+        /*[HttpPost("{id}/upload")]
         public async Task<IActionResult> UploadProfileImage(int id, IFormFile file)
         {
             var student = await _context.Students.FindAsync(id);
@@ -244,7 +245,7 @@ namespace StudentRepo.Server.Controllers
             }
 
             return Ok(student);
-        }
+        }*/
 
         // DELETE: api/Students/5
         [HttpDelete("{id}")]
@@ -255,7 +256,7 @@ namespace StudentRepo.Server.Controllers
             {
                 return NotFound();
             }
-            DeleteFile(student);
+            _fileHelper.DeleteFile(student);
 
             _context.Students.Remove(student);
             await _context.SaveChangesAsync();
@@ -267,37 +268,7 @@ namespace StudentRepo.Server.Controllers
         {
             return _context.Students.Any(e => e.Id == id);
         }
-        public  Student SaveFile(Student student, IFormFile file)
-        {
-            if (string.IsNullOrEmpty(_hostingEnvironment.WebRootPath))
-            {
-                throw new InvalidOperationException("Web root path is not configured.");
-                //return StatusCode(StatusCodes.Status500InternalServerError, "Web root path is not configured.");
-            }
-
-            var uniqueFileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
-            var filePath = Path.Combine(_hostingEnvironment.WebRootPath, "uploads", uniqueFileName);
-
-            Directory.CreateDirectory(Path.Combine(_hostingEnvironment.WebRootPath, "uploads")); // Ensure the directory exists
-
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                 file.CopyToAsync(stream);
-            }
-            student.ProfileImage = $"/uploads/{uniqueFileName}";
-            return student;
-        }
-        public void DeleteFile(Student student)
-        {
-            if (!string.IsNullOrEmpty(student.ProfileImage))
-            {
-                var imagePath = Path.Combine(_hostingEnvironment.WebRootPath, "uploads", Path.GetFileName(student.ProfileImage));
-                if (System.IO.File.Exists(imagePath))
-                {
-                    System.IO.File.Delete(imagePath);
-                }
-            }
-        }
+        
     }
 
 
