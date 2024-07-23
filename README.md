@@ -2,7 +2,7 @@
 
 ## Overview
 
-This project is a simple web application for managing student registrations, built using C#.Net and Angular 14. It features a summary and detail sections, a full-width grid for student details, CRUD operations, pagination, searching, sorting, and profile image display.
+This project is a simple web application for managing student registrations, built using C#.Net and Angular 17. It features a summary and detail sections, a full-width grid for student details, CRUD operations, pagination, searching, sorting, and profile image display.
 
 ## Technologies Used
 
@@ -10,7 +10,7 @@ This project is a simple web application for managing student registrations, bui
 - Angular 17.3.11
 - Entity Framework Core
 - MS SQL Server Express
-- Visual Studio / Visual Studio Code
+- Visual Studio
 
 ## Features
 
