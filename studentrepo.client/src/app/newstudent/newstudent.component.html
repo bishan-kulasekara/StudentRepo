@@ -1,49 +1,44 @@
-<div>
+<div class="new-student-card">
+  <h2 class="title">New Student</h2>
   <form (ngSubmit)="onSubmit()">
-    <div>
-      <label for="firstName">First Name:</label>
-      <input type="text" id="firstName" [(ngModel)]="student.firstName" name="firstName" placeholder="First Name" required>
-    </div>
-    <div>
-      <label for="lastName">Last Name:</label>
-      <input type="text" id="lastName" [(ngModel)]="student.lastName" name="lastName" placeholder="Last Name" required>
-    </div>
-    <div>
-      <label for="mobile">Mobile:</label>
-      <input type="text" id="mobile" [(ngModel)]="student.mobile" name="mobile" placeholder="Mobile">
-    </div>
-    <div>
-      <label for="email">Email:</label>
-      <input type="email" id="email" [(ngModel)]="student.email" name="email" placeholder="Email" required>
-    </div>
-    <div>
-      <label for="nic">NIC:</label>
-      <input type="text" id="nic" [(ngModel)]="student.nic" name="nic" placeholder="NIC">
-    </div>
-    <div>
-      <label for="dateOfBirth">Date of Birth:</label>
-      <input type="date" id="dateOfBirth" [(ngModel)]="student.dateOfBirth" name="dateOfBirth" placeholder="Date of Birth">
-    </div>
-    <div>
-      <label for="address">Address:</label>
-      <input type="text" id="address" [(ngModel)]="student.address" name="address" placeholder="Address">
-    </div>
-    <div>
-      <label for="profileImage">Profile Image:</label>
-      <div class="image-upload-container" (click)="fileInput.click()">
-        <input type="file" id="profileImage" (change)="onFileSelected($event)" #fileInput style="display:none">
-        <div class="image-placeholder">
-          <img *ngIf="imageUrl" [src]="imageUrl" alt="Profile Image" class="profile-image">
-          <svg *ngIf="!imageUrl" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" class="profile-svg">
-            <path fill="currentColor" d="M19 10a1 1 0 0 0-1 1v3.38l-1.48-1.48a2.79 2.79 0 0 0-3.93 0l-.7.71l-2.48-2.49a2.79 2.79 0 0 0-3.93 0L4 12.61V7a1 1 0 0 1 1-1h8a1 1 0 0 0 0-2H5a3 3 0 0 0-3 3v12.22A2.79 2.79 0 0 0 4.78 22h12.44a2.88 2.88 0 0 0 .8-.12a2.74 2.74 0 0 0 2-2.65V11A1 1 0 0 0 19 10M5 20a1 1 0 0 1-1-1v-3.57l2.89-2.89a.78.78 0 0 1 1.1 0L15.46 20Zm13-1a1 1 0 0 1-.18.54L13.3 15l.71-.7a.77.77 0 0 1 1.1 0L18 17.21Zm3-15h-1V3a1 1 0 0 0-2 0v1h-1a1 1 0 0 0 0 2h1v1a1 1 0 0 0 2 0V6h1a1 1 0 0 0 0-2" />
-          </svg>
-          <span *ngIf="imageUrl" class="badge" (click)="clearImage($event)">&#10006;</span>
-        </div>
+    <div class="image-upload-container" (click)="fileInput.click()">
+      <input type="file" id="profileImage" (change)="onFileSelected($event)" #fileInput style="display:none">
+      <div class="image-placeholder">
+        <img *ngIf="imageUrl" [src]="imageUrl" alt="Profile Image" class="profile-image">
+        <svg *ngIf="!imageUrl" xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" class="profile-svg">
+          <path fill="currentColor" d="M3 21q-.825 0-1.412-.587T1 19V7q0-.825.588-1.412T3 5h3.15L7.4 3.65q.275-.3.663-.475T8.875 3H13q.425 0 .713.288T14 4t-.288.713T13 5H8.875L7.05 7H3v12h16v-8q0-.425.288-.712T20 10t.713.288T21 11v8q0 .825-.587 1.413T19 21zM19 5h-1q-.425 0-.712-.288T17 4t.288-.712T18 3h1V2q0-.425.288-.712T20 1t.713.288T21 2v1h1q.425 0 .713.288T23 4t-.288.713T22 5h-1v1q0 .425-.288.713T20 7t-.712-.288T19 6zm-8 12.5q1.875 0 3.188-1.312T15.5 13t-1.312-3.187T11 8.5T7.813 9.813T6.5 13t1.313 3.188T11 17.5m0-2q-1.05 0-1.775-.725T8.5 13t.725-1.775T11 10.5t1.775.725T13.5 13t-.725 1.775T11 15.5" />
+        </svg>
+        <span *ngIf="imageUrl" class="badge" (click)="clearImage($event)">&#10006;</span>
       </div>
     </div>
-    <div>
-      <button type="submit">Submit</button>
+
+    <div class="form-grid">
+      <label for="firstName" class="fnlabel">First Name:</label>
+      <input type="text" id="firstName" [(ngModel)]="student.firstName" name="firstName" placeholder="First Name" required class="fninput">
+
+      <label for="lastName" class="lnlabel">Last Name:</label>
+      <input type="text" id="lastName" [(ngModel)]="student.lastName" name="lastName" placeholder="Last Name" required class="lninput">
+
+      <label for="mobile" class="mbllabel">Mobile:</label>
+      <input type="text" id="mobile" [(ngModel)]="student.mobile" name="mobile" placeholder="Mobile" class="mblinput">
+
+      <label for="email" class="emllabel">Email:</label>
+      <input type="email" id="email" [(ngModel)]="student.email" name="email" placeholder="Email" required class="emlinput">
+
+      <label for="nic" class="niclabel">NIC:</label>
+      <input type="text" id="nic" [(ngModel)]="student.nic" name="nic" placeholder="NIC" class="nicinput">
+
+      <label for="dateOfBirth" class="doblabel">Date of Birth:</label>
+      <input type="date" id="dateOfBirth" [(ngModel)]="student.dateOfBirth" name="dateOfBirth" placeholder="Date of Birth" class="dobinput">
+
+      <label for="address" class="adrlabel">Address:</label>
+      <input type="text" id="address" [(ngModel)]="student.address" name="address" placeholder="Address" class="adrinput">
     </div>
+
+    <div class="update-button-container">
+      <button type="submit" class="update-button">Submit</button>
+    </div>
+
     <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
   </form>
 </div>

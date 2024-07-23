@@ -16,10 +16,13 @@
       <p>Mobile: {{ selectedStudent.mobile }}</p>
       <p>Email: {{ selectedStudent.email }}</p>
       <p>NIC: {{ selectedStudent.nic }}</p>
-      <p>Date of Birth: {{ selectedStudent.dateOfBirth }}</p>
+      <p>Date of Birth: {{getFormattedDate(selectedStudent.dateOfBirth)}}</p>
       <p>Address: {{ selectedStudent.address }}</p>
+      <button (click)="navigateToUpdate(selectedStudent.id)">Update</button>
+      <button class="delete" (click)="onDelete(selectedStudent)">Delete</button>
     </div>
 
+    <app-delete-confirmation-modal *ngIf="showModal" (confirmDelete)="onConfirmDelete()" (cancelDelete)="onCancelDelete()"></app-delete-confirmation-modal>
     <!--<ng-template [ngIf]="editMode">
         <div>
           <div>

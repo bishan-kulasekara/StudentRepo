@@ -119,14 +119,57 @@ namespace StudentRepo.Server.Controllers
         // PUT: api/Students/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutStudent(int id, Student student, IFormFile? file)
+        public async Task<IActionResult> PutStudent(int id, [FromForm] Student student, [FromForm] IFormFile? file)
         {
             if (id != student.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(student).State = EntityState.Modified;
+            var existingStudent = await _context.Students.FindAsync(id);
+            if (existingStudent == null)
+            {
+                return NotFound();
+            }
+            if (!string.IsNullOrEmpty(student.FirstName))
+            {
+                existingStudent.FirstName = student.FirstName;
+            }
+            if (!string.IsNullOrEmpty(student.LastName))
+            {
+                existingStudent.LastName = student.LastName;
+            }
+            if (!string.IsNullOrEmpty(student.Mobile))
+            {
+                existingStudent.Mobile = student.Mobile;
+            }
+            if (!string.IsNullOrEmpty(student.Email))
+            {
+                existingStudent.Email = student.Email;
+            }
+            if (!string.IsNullOrEmpty(student.NIC))
+            {
+                existingStudent.NIC = student.NIC;
+            }
+            if (!string.IsNullOrEmpty(student.Address))
+            {
+                existingStudent.Address = student.Address;
+            }
+            if (student.DateOfBirth != default)
+            {
+                existingStudent.DateOfBirth = student.DateOfBirth;
+            }
+
+            if (file != null && file.Length > 0)
+            {
+                if (!string.IsNullOrEmpty(existingStudent.ProfileImage))
+                {
+                    DeleteFile(existingStudent);
+                }
+                existingStudent = SaveFile(existingStudent, file);
+            }
+
+            _context.Entry(existingStudent).State = EntityState.Modified;
 
             try
             {
@@ -147,6 +190,8 @@ namespace StudentRepo.Server.Controllers
             return NoContent();
         }
 
+
+
         // POST: api/Students
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
@@ -156,22 +201,7 @@ namespace StudentRepo.Server.Controllers
 
             if (file != null && file.Length > 0)
             {
-                if (string.IsNullOrEmpty(_hostingEnvironment.WebRootPath))
-                {
-                    return StatusCode(StatusCodes.Status500InternalServerError, "Web root path is not configured.");
-                }
-
-                var uniqueFileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
-                var filePath = Path.Combine(_hostingEnvironment.WebRootPath, "uploads", uniqueFileName);
-
-                Directory.CreateDirectory(Path.Combine(_hostingEnvironment.WebRootPath, "uploads")); // Ensure the directory exists
-
-                using (var stream = new FileStream(filePath, FileMode.Create))
-                {
-                    await file.CopyToAsync(stream);
-                }
-
-                student.ProfileImage = $"/uploads/{uniqueFileName}";
+                student=SaveFile(student, file);
             }
 
             _context.Students.Add(student);
@@ -225,6 +255,7 @@ namespace StudentRepo.Server.Controllers
             {
                 return NotFound();
             }
+            DeleteFile(student);
 
             _context.Students.Remove(student);
             await _context.SaveChangesAsync();
@@ -236,5 +267,38 @@ namespace StudentRepo.Server.Controllers
         {
             return _context.Students.Any(e => e.Id == id);
         }
+        public  Student SaveFile(Student student, IFormFile file)
+        {
+            if (string.IsNullOrEmpty(_hostingEnvironment.WebRootPath))
+            {
+                throw new InvalidOperationException("Web root path is not configured.");
+                //return StatusCode(StatusCodes.Status500InternalServerError, "Web root path is not configured.");
+            }
+
+            var uniqueFileName = $"{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+            var filePath = Path.Combine(_hostingEnvironment.WebRootPath, "uploads", uniqueFileName);
+
+            Directory.CreateDirectory(Path.Combine(_hostingEnvironment.WebRootPath, "uploads")); // Ensure the directory exists
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                 file.CopyToAsync(stream);
+            }
+            student.ProfileImage = $"/uploads/{uniqueFileName}";
+            return student;
+        }
+        public void DeleteFile(Student student)
+        {
+            if (!string.IsNullOrEmpty(student.ProfileImage))
+            {
+                var imagePath = Path.Combine(_hostingEnvironment.WebRootPath, "uploads", Path.GetFileName(student.ProfileImage));
+                if (System.IO.File.Exists(imagePath))
+                {
+                    System.IO.File.Delete(imagePath);
+                }
+            }
+        }
     }
+
+
 }
