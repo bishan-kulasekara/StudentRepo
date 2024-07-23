@@ -33,7 +33,7 @@ This project is a simple web application for managing student registrations, bui
 
 1. **Clone the Repository**
    ```
-   git clone [GitHub Repository URL]
+   git clone GitHub Repository URL]](https://github.com/bishan-kulasekara/StudentRepo.git
    cd student-registration-system
    ```
 2. **Backend Setup**
